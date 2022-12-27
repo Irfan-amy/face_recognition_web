@@ -6,6 +6,8 @@
     "start": "next start"
   },
   "dependencies": {
+    "@supabase/storage-js": "^2.1.0",
+    "@supabase/supabase-js": "^2.2.2",
     "face-api.js": "^0.22.2",
     "next": "latest",
     "react": "18.2.0",

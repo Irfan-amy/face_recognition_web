@@ -64,16 +64,16 @@ const Home = () => {
   //     console.log("test " + result.length);
   //     console.log("test2 " + labeledFaceDescriptors.length);
   //   });
-    // navigator.mediaDevices
-    //   .getUserMedia({ video: { width: 300 } })
-    //   .then((stream) => {
-    //     let video = videoRef.current;
-    //     video.srcObject = stream;
-    //     video.play();
-    //   })
-    //   .catch((err) => {
-    //     console.error("error:", err);
-    //   });
+  // navigator.mediaDevices
+  //   .getUserMedia({ video: { width: 300 } })
+  //   .then((stream) => {
+  //     let video = videoRef.current;
+  //     video.srcObject = stream;
+  //     video.play();
+  //   })
+  //   .catch((err) => {
+  //     console.error("error:", err);
+  //   });
   //   // setVideoWidth(videoRef.width)
   //   // setVideoHeight(videoRef.height)
   //   videoWidth = videoRef.width;
@@ -118,7 +118,7 @@ const Home = () => {
   //           .clearRect(0, 0, videoWidth, videoHeight);
   //       canvasRef &&
   //         canvasRef.current &&
-          
+
   //       canvasRef &&
   //         canvasRef.current &&
   //         faceapi.draw.drawFaceLandmarks(canvasRef.current, resizedDetections);
@@ -152,9 +152,9 @@ const Home = () => {
   // };
 
   // const closeWebcam = () => {
-    // videoRef.current.pause();
-    // videoRef.current.srcObject.getTracks()[0].stop();
-    // setCaptureVideo(false);
+  // videoRef.current.pause();
+  // videoRef.current.srcObject.getTracks()[0].stop();
+  // setCaptureVideo(false);
   // };
   React.useEffect(() => {
     Webcam();
@@ -171,18 +171,16 @@ const Home = () => {
     function startVideo() {
       setModelsLoaded(true);
       navigator.mediaDevices
-      .getUserMedia({ video: {} })
-      .then((stream) => {
-        let video = videoRef.current;
-        video.srcObject = stream;
-        // video.play();
-      })
-      .catch((err) => {
-        console.error("error:", err);
-      });
+        .getUserMedia({ video: {} })
+        .then((stream) => {
+          let video = videoRef.current;
+          video.srcObject = stream;
+          // video.play();
+        })
+        .catch((err) => {
+          console.error("error:", err);
+        });
     }
-
-    
   }
   const handleVideoOnPlay = () => {
     // const canvas = faceapi.createCanvasFromMedia(videoRef.current);
@@ -198,8 +196,6 @@ const Home = () => {
     (async () => {
       labeledFaceDescriptors = await loadLabeledImages();
     })();
-
-    
 
     setInterval(async () => {
       const detections = await faceapi
@@ -221,14 +217,16 @@ const Home = () => {
           const box = resizedDetections[i].detection.box;
           setName(result.toString());
           console.log("name : " + name);
-          const drawBox = new faceapi.draw.DrawBox(box, { label: result.toString() })
+          const drawBox = new faceapi.draw.DrawBox(box, {
+            label: result.toString(),
+          });
           // faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
-          drawBox.draw(canvas)
+          drawBox.draw(canvas);
         });
       }
     }, 100);
     function loadLabeledImages() {
-      const labels = ["Irfan","Irfan2"];
+      const labels = ["Irfan", "Irfan2"];
       return Promise.all(
         labels.map(async (label) => {
           const descriptions = [];
@@ -242,20 +240,20 @@ const Home = () => {
         })
       );
     }
-  //   function loadLabeledImages() {
-  //     const labels = ['Irfan'];
-  //     return Promise.all(
-  //         labels.map(async label => {
-  //             const descriptions = []
-  //             for (let i = 1; i <= 7; i++) {
-  //                 const img = await faceapi.fetchImage(`/static/images/${label}.jpg`)
-  //                 const detections = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor()
-  //                 descriptions.push(detections.descriptor)
-  //             }
-  //             return new faceapi.LabeledFaceDescriptors(label, descriptions)
-  //         })
-  //     )
-  // }
+    //   function loadLabeledImages() {
+    //     const labels = ['Irfan'];
+    //     return Promise.all(
+    //         labels.map(async label => {
+    //             const descriptions = []
+    //             for (let i = 1; i <= 7; i++) {
+    //                 const img = await faceapi.fetchImage(`/static/images/${label}.jpg`)
+    //                 const detections = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor()
+    //                 descriptions.push(detections.descriptor)
+    //             }
+    //             return new faceapi.LabeledFaceDescriptors(label, descriptions)
+    //         })
+    //     )
+    // }
   };
   return (
     <div>
