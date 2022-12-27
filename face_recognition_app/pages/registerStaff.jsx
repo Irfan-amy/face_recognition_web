@@ -16,10 +16,14 @@ const RegisterStaff = () => {
   const { height, width } = useWindowDimensions();
   const [hasCapturedImage, setHasCapturedImage] = React.useState(false);
   const [name, setName] = React.useState("false");
-  const [modalOn, setModalOn] = React.useState(false);
+
   const [labeledFaceDescriptors, setLabeledFaceDescriptors] = React.useState(
     []
   );
+
+  const [modalOn, setModalOn] = React.useState(false);
+  const [modalType, setModalType] = React.useState("No Face");
+  const [modalError, setModalError] = React.useState("");
   // const [videoWidth, setVideoWidth] = React.useState(width);
   // const [videoHeight, setVideoHeight] = React.useState(height);
   const router = useRouter();
@@ -123,33 +127,23 @@ const RegisterStaff = () => {
   async function captureImage() {
     canvasRef.current.width = videoRef.current.width;
     canvasRef.current.height = videoRef.current.height;
-    canvasRef.current
-      .getContext("2d")
-      .drawImage(
-        videoRef.current,
-        0,
-        0,
-        videoRef.current.width,
-        videoRef.current.height
-      );
-    // const image = new Image();
-    // image.src =
-    //   "https://post.medicalnewstoday.com/wp-content/uploads/sites/3/2020/03/GettyImages-1092658864_thumb-732x549.jpg";
-
-    // const canvas = canvasRef.current;
-    // const context = canvas.getContext("2d");
-    // context.fillStyle = "#000000";
-    // context.fillRect(0, 0, context.canvas.width, context.canvas.height);
-
-    // image.onload = () => {
-    //   context.drawImage(image, 0, 0);
-
-    // };
-    await drawDetection();
-    setHasCapturedImage(true);
+    
     stopVideo();
+    
+    var detections = await drawDetection();
+    setHasCapturedImage(true);
 
-    // console.log(detections);
+    if(detections.length == 0){
+      setModalOn(true);
+      setModalType("No Face");
+      cancelImage();
+    }
+    else if(detections.length > 1){
+      setModalOn(true);
+      setModalType("Error");
+      setModalError("Multiple faces")
+      cancelImage();
+    }
 
     // setModalOn(true);
   }
@@ -161,17 +155,30 @@ const RegisterStaff = () => {
     };
     faceapi.matchDimensions(canvas, displaySize);
     console.log("test");
-    const detections = await faceapi
-      .detectAllFaces(canvasRef.current, new faceapi.TinyFaceDetectorOptions())
-      .withFaceLandmarks()
-      .withFaceDescriptors();
+    const detections = await faceapi.detectAllFaces(
+      videoRef.current,
+      new faceapi.TinyFaceDetectorOptions()
+    );
     const resizedDetections = faceapi.resizeResults(detections, displaySize);
 
     faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
-    console.log(detections);
+    console.log(detections.length);
+    return detections;
   }
   async function registerStaff() {
-    const dataurl = canvasRef.current.toDataURL("image/jpeg");
+    var canvas = document.createElement("canvas");
+    canvas.style.position = "absolute";
+    canvas.width = videoRef.current.width;
+    canvas.height = videoRef.current.height;
+    canvas.getContext("2d")
+      .drawImage(
+        videoRef.current,
+        0,
+        0,
+        videoRef.current.width,
+        videoRef.current.height
+      );
+    const dataurl = canvas.toDataURL("image/jpeg");
     var result = await fetch("/api/registerStaff", {
       method: "POST",
       headers: {
@@ -182,6 +189,16 @@ const RegisterStaff = () => {
         dataURL: dataurl,
       }),
     });
+    if (result.status == 200) {
+      setModalType("Registered");
+      setModalOn(true);
+    }else{
+      const { error } = await result.json();
+      console.log(error);
+      setModalError(error);
+      setModalType("Error");
+      setModalOn(true);
+    }
   }
   function cancelImage() {
     console.log("test");
@@ -192,7 +209,13 @@ const RegisterStaff = () => {
       .getContext("2d")
       .clearRect(0, 0, canvas.width, canvas.height);
     // setModalOn(true);
+    resumeVideo();
     setHasCapturedImage(false);
+  }
+  function onModalClose() {
+    if (modalType == "Registered") {
+      goHome();
+    }
   }
   return (
     <div>
@@ -390,7 +413,16 @@ const RegisterStaff = () => {
       ) : (
         <></>
       )}
-      {modalOn && <Modal setModalOn={setModalOn} />}
+      {modalOn && (
+        <Modal
+          setModalOn={setModalOn}
+          modalType={modalType}
+          modalError={modalError}
+          onClose={() => {
+            onModalClose();
+          }}
+        />
+      )}
     </div>
   );
 };

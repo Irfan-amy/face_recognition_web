@@ -41,14 +41,14 @@ export default async (req, res) => {
             if (dataURL) {
               const { data, error } = await supabase.storage
                 .from("images")
-                .upload(name + ".png", dataURLtoFile(dataURL), {
-                  contentType: "image/png",
+                .upload(name + ".jpg", dataURLtoFile(dataURL), {
+                  contentType: "image/jpeg",
                   upsert: true,
                 });
               if (data) res.status(200).json({ success: true });
-              else res.status(400).json({ error: error });
+              else res.status(400).json({ error: error.details });
             }
-          } else res.status(400).json({ error: error });
+          } else res.status(400).json({ error:  error.details });
         }
       } catch (error) {
         res.status(400).json({ error: "Unknown" });

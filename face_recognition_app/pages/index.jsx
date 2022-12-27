@@ -225,20 +225,36 @@ const Home = () => {
         });
       }
     }, 100);
-    function loadLabeledImages() {
+    async function loadLabeledImages() {
+      if(null)
+      console.log("True");
+      var result = await fetch("/api/getStaffList", {
+        method: "GET",
+        headers: {
+          "Content-type": "application/json",
+        },
+      });
+      if (result.status == 200) {
+        const { staffList } = await result.json();
+        if(staffList.length ==0)
+          return null;
+        return await Promise.all(
+          staffList.map(async (staffName) => {
+            const descriptions = [];
+            const img = await faceapi.fetchImage(`https://fbfvbgubjvmufzrwrhsf.supabase.co/storage/v1/object/public/images/${staffName}.jpg`);
+            const detections = await faceapi
+              .detectSingleFace(img)
+              .withFaceLandmarks()
+              .withFaceDescriptor();
+            descriptions.push(detections.descriptor);
+            return new faceapi.LabeledFaceDescriptors(staffName, descriptions);
+          })
+        );
+      }else{
+        return null;
+      }
       const labels = ["Irfan", "Irfan2"];
-      return Promise.all(
-        labels.map(async (label) => {
-          const descriptions = [];
-          const img = await faceapi.fetchImage(`/images/${label}.jpg`);
-          const detections = await faceapi
-            .detectSingleFace(img)
-            .withFaceLandmarks()
-            .withFaceDescriptor();
-          descriptions.push(detections.descriptor);
-          return new faceapi.LabeledFaceDescriptors(label, descriptions);
-        })
-      );
+      
     }
     //   function loadLabeledImages() {
     //     const labels = ['Irfan'];
