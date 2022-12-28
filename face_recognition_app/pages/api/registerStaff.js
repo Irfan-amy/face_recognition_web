@@ -25,7 +25,6 @@ export default async (req, res) => {
     // console.log(file);
     return buf;
   }
-  console.log("done");
   const { method } = req;
 
   switch (method) {
@@ -48,7 +47,7 @@ export default async (req, res) => {
               if (data) res.status(200).json({ success: true });
               else res.status(400).json({ error: error.details });
             }
-          } else res.status(400).json({ error:  error.details });
+          } else res.status(400).json({ error: error.details });
         }
       } catch (error) {
         res.status(400).json({ error: "Unknown" });

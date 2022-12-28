@@ -182,6 +182,9 @@ const Home = () => {
         });
     }
   }
+  function goStaffList() {
+    window.location.href = "/staffList";
+  }
   const handleVideoOnPlay = () => {
     // const canvas = faceapi.createCanvasFromMedia(videoRef.current);
     const canvas = canvasRef.current;
@@ -226,8 +229,7 @@ const Home = () => {
       }
     }, 100);
     async function loadLabeledImages() {
-      if(null)
-      console.log("True");
+      if (null) console.log("True");
       var result = await fetch("/api/getStaffList", {
         method: "GET",
         headers: {
@@ -236,12 +238,13 @@ const Home = () => {
       });
       if (result.status == 200) {
         const { staffList } = await result.json();
-        if(staffList.length ==0)
-          return null;
+        if (staffList.length == 0) return null;
         return await Promise.all(
           staffList.map(async (staffName) => {
             const descriptions = [];
-            const img = await faceapi.fetchImage(`https://fbfvbgubjvmufzrwrhsf.supabase.co/storage/v1/object/public/images/${staffName}.jpg`);
+            const img = await faceapi.fetchImage(
+              `https://fbfvbgubjvmufzrwrhsf.supabase.co/storage/v1/object/public/images/${staffName}.jpg`
+            );
             const detections = await faceapi
               .detectSingleFace(img)
               .withFaceLandmarks()
@@ -250,11 +253,10 @@ const Home = () => {
             return new faceapi.LabeledFaceDescriptors(staffName, descriptions);
           })
         );
-      }else{
+      } else {
         return null;
       }
       const labels = ["Irfan", "Irfan2"];
-      
     }
     //   function loadLabeledImages() {
     //     const labels = ['Irfan'];
@@ -313,6 +315,8 @@ const Home = () => {
               style={{
                 display: "flex",
                 justifyContent: "center",
+                width: "100vw",
+                height: "100vh",
                 // padding: "10px",
               }}
             >
@@ -322,9 +326,36 @@ const Home = () => {
                 height={videoHeight}
                 width={videoWidth}
                 onPlay={handleVideoOnPlay}
-                style={{ objectFit: "cover", width: width, height: height }}
+                style={{
+                  position: "absolute",
+                  objectFit: "cover",
+                  width: width,
+                  height: height,
+                  zIndex: -2,
+                }}
               ></video>
-              <canvas ref={canvasRef} style={{ position: "absolute" }} />
+              <canvas
+                ref={canvasRef}
+                style={{ position: "absolute", zIndex: -1 }}
+              />
+              <div className="flex flex-row self-end justify-center w-full py-8 mx-8">
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    goStaffList();
+                  }}
+                  className="self-center bg-slate-500 hover:bg-slate-700 text-white font-bold py-4 px-4 rounded-full"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="#ffffff"
+                    className="w-8 h-8"
+                  >
+                    <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-1.01.75.75 0 00.42-.643 4.875 4.875 0 00-6.957-4.611 8.586 8.586 0 011.71 5.157v.003z" />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
         ) : (

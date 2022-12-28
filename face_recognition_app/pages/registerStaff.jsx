@@ -127,21 +127,20 @@ const RegisterStaff = () => {
   async function captureImage() {
     canvasRef.current.width = videoRef.current.width;
     canvasRef.current.height = videoRef.current.height;
-    
+
     stopVideo();
-    
+
     var detections = await drawDetection();
     setHasCapturedImage(true);
 
-    if(detections.length == 0){
+    if (detections.length == 0) {
       setModalOn(true);
       setModalType("No Face");
       cancelImage();
-    }
-    else if(detections.length > 1){
+    } else if (detections.length > 1) {
       setModalOn(true);
       setModalType("Error");
-      setModalError("Multiple faces")
+      setModalError("Multiple faces");
       cancelImage();
     }
 
@@ -170,7 +169,8 @@ const RegisterStaff = () => {
     canvas.style.position = "absolute";
     canvas.width = videoRef.current.width;
     canvas.height = videoRef.current.height;
-    canvas.getContext("2d")
+    canvas
+      .getContext("2d")
       .drawImage(
         videoRef.current,
         0,
@@ -192,7 +192,7 @@ const RegisterStaff = () => {
     if (result.status == 200) {
       setModalType("Registered");
       setModalOn(true);
-    }else{
+    } else {
       const { error } = await result.json();
       console.log(error);
       setModalError(error);
@@ -219,39 +219,6 @@ const RegisterStaff = () => {
   }
   return (
     <div>
-      {/* <div style={{ textAlign: "center", padding: "10px" }}>
-        {captureVideo && modelsLoaded ? (
-          <button
-            onClick={closeWebcam}
-            style={{
-              cursor: "pointer",
-              backgroundColor: "green",
-              color: "white",
-              padding: "15px",
-              fontSize: "25px",
-              border: "none",
-              borderRadius: "10px",
-            }}
-          >
-            Close Webcam
-          </button>
-        ) : (
-          <button
-            onClick={startVideo}
-            style={{
-              cursor: "pointer",
-              backgroundColor: "green",
-              color: "white",
-              padding: "15px",
-              fontSize: "25px",
-              border: "none",
-              borderRadius: "10px",
-            }}
-          >
-            Open Webcam
-          </button>
-        )}
-      </div> */}
       {captureVideo ? (
         modelsLoaded ? (
           <div>
@@ -287,7 +254,7 @@ const RegisterStaff = () => {
                   <button
                     onClick={(e) => {
                       e.preventDefault();
-                      captureImage();
+                      goHome();
                     }}
                     className="absolute left-8 bg-slate-500 hover:bg-slate-700 text-white font-bold py-4 px-4 rounded-full"
                   >
