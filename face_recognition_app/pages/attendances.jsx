@@ -3,6 +3,7 @@ import Modal from "../components/Modal";
 import ModalChoices from "../components/ModalChoices";
 import React from "react";
 import Moment from "moment";
+import { CSVLink } from "react-csv";
 // import video from "../statics/1.mp4";
 
 const AttendancesPage = () => {
@@ -88,6 +89,18 @@ const AttendancesPage = () => {
   function selectDate(date) {
     setSelectedDate(date);
   }
+
+  function onClickDownloadBtn() {
+    var listAfterFilter = listAttendance
+      .map((e) => (e.date == selectedDate ? e : null))
+      .filter((x) => !!x);
+
+    const headers = [
+      { label: "NAME", key: "name" },
+      { label: "CHECK_OUT_TIME", key: "checkInTime" },
+      { label: "CHECK_OUT_TIME", key: "checkOutTime" },
+    ];
+  }
   return (
     <section className="flex gap-0 bg-black">
       <div className="items-stretch flex flex-col w-full ">
@@ -113,6 +126,37 @@ const AttendancesPage = () => {
                 />
               </svg>
             </button>
+          ) : (
+            <></>
+          )}
+          {selectedDate ? (
+            <CSVLink
+              className="self-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-4 px-4 h-full rounded-full"
+              data={listAttendance
+                .map((e) => (e.date == selectedDate ? e : null))
+                .filter((x) => !!x)}
+              headers={[
+                { label: "NAME", key: "name" },
+                { label: "CHECK_OUT_TIME", key: "checkInTime" },
+                { label: "CHECK_OUT_TIME", key: "checkOutTime" },
+              ]}
+              filename={selectedDate + "_attendance.csv"}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-8 h-8"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
+                />
+              </svg>
+            </CSVLink>
           ) : (
             <></>
           )}
@@ -188,14 +232,10 @@ const AttendancesPage = () => {
                       <div className="flex-none flex flex-row text-base ">
                         <div className="flex basis-1/2">{e.name}</div>
                         <div className="flex basis-1/4">
-                          {e.checkInTime
-                            ? e.checkInTime
-                            : "-"}
+                          {e.checkInTime ? e.checkInTime : "-"}
                         </div>
                         <div className="flex basis-1/4">
-                          {e.checkOutTime
-                            ? e.checkOutTime
-                            : "-"}
+                          {e.checkOutTime ? e.checkOutTime : "-"}
                         </div>
                       </div>
                     ) : (
