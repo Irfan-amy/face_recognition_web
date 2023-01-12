@@ -25,9 +25,17 @@ const AttendancesPage = () => {
       let listDateString = attendances.map((e) => e.date);
       let listUniqueDateString = [...new Set(listDateString)];
       setListDate(
-        listUniqueDateString.map((e) =>
-          isValidDate(new Date(e)) ? new Date(e) : null
-        )
+        listUniqueDateString
+          .map((e) =>
+            isValidDate(Moment(e, "DD/MM/YYYY").toDate())
+              ? Moment(e, "DD/MM/YYYY").toDate()
+              : null
+          )
+          .sort(function (a, b) {
+            // Turn your strings into dates, and then subtract them
+            // to get a value that is either negative, positive, or zero.
+            return b - a;
+          })
       );
     });
   }, []);
@@ -87,6 +95,7 @@ const AttendancesPage = () => {
   }
 
   function selectDate(date) {
+    console.log(date);
     setSelectedDate(date);
   }
 
@@ -187,17 +196,17 @@ const AttendancesPage = () => {
                 </h1>
               </div>
               {!selectedDate &&
-                listDate.map((e) =>
-                  e ? (
+                listDate.map((element) =>
+                  element ? (
                     <button
                       className="flex-none flex flex-row w-full my-2 px-6 py-4 border border-slate-300 rounded-lg items-center"
                       onClick={(e) => {
                         e.preventDefault();
-                        selectDate(Moment(e).format("DD/MM/YYYY"));
+                        selectDate(Moment(element).format("DD/MM/YYYY"));
                       }}
                     >
                       <div className="grow text-left">
-                        {Moment(e).format("DD/MM/YYYY")}
+                        {Moment(element).format("DD/MM/YYYY")}
                       </div>
                       <div className="flex-none ">
                         <svg
