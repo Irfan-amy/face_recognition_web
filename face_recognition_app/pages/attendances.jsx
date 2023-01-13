@@ -146,7 +146,7 @@ const AttendancesPage = () => {
                 .filter((x) => !!x)}
               headers={[
                 { label: "NAME", key: "name" },
-                { label: "CHECK_OUT_TIME", key: "checkInTime" },
+                { label: "CHECK_IN_TIME", key: "checkInTime" },
                 { label: "CHECK_OUT_TIME", key: "checkOutTime" },
               ]}
               filename={selectedDate + "_attendance.csv"}
