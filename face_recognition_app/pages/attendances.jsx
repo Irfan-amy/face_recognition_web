@@ -106,7 +106,7 @@ const AttendancesPage = () => {
 
     const headers = [
       { label: "NAME", key: "name" },
-      { label: "CHECK_OUT_TIME", key: "checkInTime" },
+      { label: "CHECK_IN_TIME", key: "checkInTime" },
       { label: "CHECK_OUT_TIME", key: "checkOutTime" },
     ];
   }
