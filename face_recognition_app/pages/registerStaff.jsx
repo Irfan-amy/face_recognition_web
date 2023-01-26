@@ -133,14 +133,19 @@ const RegisterStaff = () => {
     var detections = await drawDetection();
     setHasCapturedImage(true);
 
-    if (detections.length == 0) {
+    // if (detections.length == 0) {
+    //   setModalOn(true);
+    //   setModalType("No Face");
+    //   cancelImage();
+    // } else if (detections.length > 1) {
+    //   setModalOn(true);
+    //   setModalType("Error");
+    //   setModalError("Multiple faces");
+    //   cancelImage();
+    // }
+    if(!detections){
       setModalOn(true);
       setModalType("No Face");
-      cancelImage();
-    } else if (detections.length > 1) {
-      setModalOn(true);
-      setModalType("Error");
-      setModalError("Multiple faces");
       cancelImage();
     }
 
@@ -154,14 +159,15 @@ const RegisterStaff = () => {
     };
     faceapi.matchDimensions(canvas, displaySize);
     console.log("test");
-    const detections = await faceapi.detectAllFaces(
-      videoRef.current,
-      new faceapi.TinyFaceDetectorOptions()
-    );
+    const detections = await faceapi.detectSingleFace(videoRef.current)
+    .withFaceLandmarks()
+    .withFaceDescriptor();
+
+    if(!detections) return null;
     const resizedDetections = faceapi.resizeResults(detections, displaySize);
 
     faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
-    console.log(detections.length);
+    console.log(detections);
     return detections;
   }
   async function registerStaff() {

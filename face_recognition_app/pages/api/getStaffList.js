@@ -13,9 +13,20 @@ export default async (req, res) => {
   switch (method) {
     case "GET":
       try {
-        const { data, error } = await supabase.from("Staff").select();
+        const { data, error } = await supabase.storage.from("images").list("", {
+          limit: 5000,
+          offset: 0,
+        });
         if (!error)
-          res.status(200).json({ staffList: data.map((e) => e.name) });
+          // res
+          //   .status(200)
+          //   .json({ staffList: data.map((e) => e.name.replace(".jpg", "")) });
+          res.status(200).json({
+            staffList: data.map((e) => {
+              if (e.name.includes("jpg")) return e.name.replace(".jpg", "");
+              else return null;
+            }),
+          });
         else res.status(400).json({ error: error.toString() });
       } catch (error) {
         res.status(400).json({ error: "Unknown" });

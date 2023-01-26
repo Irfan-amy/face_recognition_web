@@ -14,7 +14,9 @@ const StaffList = () => {
 
   React.useEffect(() => {
     getStaffList().then((staffList) => {
-      setListStaff(staffList);
+      setListStaff(staffList.filter(function(staffName) {
+        return !!staffName;
+      }));
     });
   }, []);
 

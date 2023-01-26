@@ -25,6 +25,13 @@ export default async (req, res) => {
         }
         if (!error) {
           if (!data.find((el) => el.name == name + ".jpg")) {
+            const { error } = await supabase
+              .from("Staff")
+              .delete()
+              .eq("name", name);
+            if (!error) res.status(200).json({ success: true });
+            else res.status(400).json({ error: error.toString() });
+          } else {
             const { data, error } = await supabase.storage
               .from("images")
               .remove([name + ".jpg"]);
@@ -38,10 +45,6 @@ export default async (req, res) => {
               else res.status(400).json({ error: error.toString() });
             } else if (error) res.status(400).json({ error: error.toString() });
             else res.status(400).json({ error: "Logic Error" });
-            if (!error) res.status(200).json({ success: true });
-            else res.status(400).json({ error: error.toString() });
-          } else {
-            res.status(400).json({ error: "Image Unavailable" });
           }
         } else res.status(400).json({ error: error.toString() });
         // const { data, error } = await supabase.from("Staff").select();

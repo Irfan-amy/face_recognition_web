@@ -259,15 +259,20 @@ const CheckInPage = () => {
         const { staffList } = await result.json();
         if (staffList.length == 0) return null;
         return await Promise.all(
-          staffList.map(async (staffName) => {
+          staffList.filter(function(staffName) {
+            return !!staffName;
+          }).map(async (staffName) => {
+            console.log(staffName);
             const descriptions = [];
             const img = await faceapi.fetchImage(
               `https://fbfvbgubjvmufzrwrhsf.supabase.co/storage/v1/object/public/images/${staffName}.jpg`
             );
+            
             const detections = await faceapi
               .detectSingleFace(img)
               .withFaceLandmarks()
               .withFaceDescriptor();
+              console.log(detections, `https://fbfvbgubjvmufzrwrhsf.supabase.co/storage/v1/object/public/images/${staffName}.jpg`);
             descriptions.push(detections.descriptor);
             return new faceapi.LabeledFaceDescriptors(staffName, descriptions);
           })
