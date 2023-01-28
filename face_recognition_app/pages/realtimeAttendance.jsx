@@ -61,7 +61,7 @@ const RealtimeAttendance = () => {
 
   const makeDetections = async () => {
     if (videoRef.current) {
-      if (!videoRef.current.readyState != 4) {
+      if (!videoRef.current.readyState == 4) {
         console.log(videoRef.current.readyState);
         requestAnimationFrame(makeDetections);
       } else {
