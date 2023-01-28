@@ -72,6 +72,7 @@ const RealtimeAttendance = () => {
   };
 
   async function detectionProcess() {
+    const canvas = canvasRef.current;
     const displaySize = {
       width: videoRef.current.width,
       height: videoRef.current.height,
