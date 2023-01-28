@@ -143,7 +143,7 @@ const RegisterStaff = () => {
     //   setModalError("Multiple faces");
     //   cancelImage();
     // }
-    if (!detections) {
+    if(!detections){
       setModalOn(true);
       setModalType("No Face");
       cancelImage();
@@ -159,11 +159,11 @@ const RegisterStaff = () => {
     };
     faceapi.matchDimensions(canvas, displaySize);
     console.log("test");
-    const detections = await faceapi
-      .detectSingleFace(videoRef.current)
-      .withFaceDescriptor();
+    const detections = await faceapi.detectSingleFace(videoRef.current)
+    .withFaceLandmarks()
+    .withFaceDescriptor();
 
-    if (!detections) return null;
+    if(!detections) return null;
     const resizedDetections = faceapi.resizeResults(detections, displaySize);
 
     faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
