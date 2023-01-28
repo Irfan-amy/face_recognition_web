@@ -88,12 +88,13 @@ const RealtimeAttendance = () => {
 
     if (labeledFaceDescriptors) {
       const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6);
-
+      console.log("try2");
       const results = resizedDetections.map((data) =>
         faceMatcher.findBestMatch(data.descriptor)
       );
 
       results.forEach((result, i) => {
+        console.log("try");
         if (result.distance <= threshold) {
           writeAttendance(result.label);
         }
