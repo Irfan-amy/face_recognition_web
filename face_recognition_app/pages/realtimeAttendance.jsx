@@ -72,6 +72,10 @@ const RealtimeAttendance = () => {
   };
 
   async function detectionProcess() {
+    const displaySize = {
+      width: videoRef.current.width,
+      height: videoRef.current.height,
+    };
     const detections = await faceapi
       .detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions())
       .withFaceLandmarks()
