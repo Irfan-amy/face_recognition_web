@@ -8,7 +8,6 @@ import React, { useEffect } from "react";
 import useWindowDimensions from "../hooks/useWindowsDimensions";
 // import video from "../statics/1.mp4";
 
-
 let labeledFaceDescriptors;
 
 const RealtimeAttendance = () => {
@@ -17,9 +16,10 @@ const RealtimeAttendance = () => {
   const [hasAttendance, setHasAttendance] = React.useState(false);
   const [checkTime, setCheckTime] = React.useState(new Date());
   const [checkName, setCheckName] = React.useState("");
+  const [checkIsCheckIn, setCheckIsCheckIn] = React.useState(true);
   const [recognizerLoaded, setRecognizerLoaded] = React.useState(false);
   const [captureVideo, setCaptureVideo] = React.useState(true);
-  //   const [isCheckIn, setIsCheckIn] = React.useState(true);
+  const [isCheckIn, setIsCheckIn] = React.useState(true);
   const { height, width } = useWindowDimensions();
   // const [labeledFaceDescriptors, setLabeledFaceDescriptors] =
   //   React.useState(null);
@@ -27,7 +27,7 @@ const RealtimeAttendance = () => {
   // const [videoWidth, setVideoWidth] = React.useState(width);
   // const [videoHeight, setVideoHeight] = React.useState(height);
 
-  const isCheckIn = true;
+  // const isCheckIn = true;
   const videoRef = React.useRef();
   var videoHeight = height;
   var videoWidth = width;
@@ -39,6 +39,7 @@ const RealtimeAttendance = () => {
   }, []);
 
   const [name, setName] = React.useState("");
+  const [distance, setDistance] = React.useState(0);
 
   async function Webcam() {
     Promise.all([
@@ -95,17 +96,14 @@ const RealtimeAttendance = () => {
       );
 
       results.forEach((result, i) => {
-        if (result.distance <= threshold) {
-          writeAttendance(result.label);
-        }
         const box = resizedDetections[i].detection.box;
         setName(result.toString());
+        setDistance(result.distance);
         const drawBox = new faceapi.draw.DrawBox(box, {
           label: result.toString(),
         });
         drawBox.draw(canvas);
       });
-      // console.log("Name:" , name);
     }
   }
 
@@ -171,7 +169,7 @@ const RealtimeAttendance = () => {
   };
 
   function checkButton() {
-    goCheckOut();
+    setIsCheckIn(!isCheckIn);
   }
 
   function goCheckOut() {
@@ -181,8 +179,16 @@ const RealtimeAttendance = () => {
   function goAttendances() {
     window.location.href = "/attendances";
   }
-  async function writeAttendance(name) {
+  async function writeAttendance(name, session, distance) {
     if (name == "unknown") {
+      return;
+    }
+
+    if (distance <= threshold) {
+      setCheckName("Try Again");
+      setHasAttendance(true);
+      setCheckTime(new Date());
+      setCheckIsCheckIn(isCheckIn);
       return;
     }
 
@@ -190,6 +196,7 @@ const RealtimeAttendance = () => {
     let args = {
       name: name,
       date: Moment(currentTime).format("DD/MM/YYYY"),
+      session: session,
     };
     if (isCheckIn) args.checkInTime = Moment(currentTime).format("HH:mm:ss");
     else args.checkOutTime = Moment(currentTime).format("HH:mm:ss");
@@ -201,52 +208,21 @@ const RealtimeAttendance = () => {
       },
       body: JSON.stringify(args),
     });
+
     if (result.status == 200) {
       const { error } = await result.json();
       if (error) {
         console.log("Error : ", error);
         return;
       }
-      setCheckName(name);
       setHasAttendance(true);
+      setCheckName(name);
       setCheckTime(currentTime);
+      setCheckIsCheckIn(isCheckIn);
     }
   }
   return (
     <div>
-      {/* <div style={{ textAlign: "center", padding: "10px" }}>
-        {captureVideo && modelsLoaded ? (
-          <button
-            onClick={closeWebcam}
-            style={{
-              cursor: "pointer",
-              backgroundColor: "green",
-              color: "white",
-              padding: "15px",
-              fontSize: "25px",
-              border: "none",
-              borderRadius: "10px",
-            }}
-          >
-            Close Webcam
-          </button>
-        ) : (
-          <button
-            onClick={startVideo}
-            style={{
-              cursor: "pointer",
-              backgroundColor: "green",
-              color: "white",
-              padding: "15px",
-              fontSize: "25px",
-              border: "none",
-              borderRadius: "10px",
-            }}
-          >
-            Open Webcam
-          </button>
-        )}
-      </div> */}
       {captureVideo ? (
         modelsLoaded ? (
           <div>
@@ -256,7 +232,6 @@ const RealtimeAttendance = () => {
                 justifyContent: "center",
                 width: "100vw",
                 height: "100vh",
-                // padding: "10px",
               }}
             >
               <video
@@ -288,8 +263,8 @@ const RealtimeAttendance = () => {
                   </div>
                 )}
               </div>
-              <div className="flex flex-col-reverse self-end w-full mx-8 ">
-                <div className="flex flex-row justify-center w-full py-8  gap-2">
+              <div className="flex flex-col-reverse self-end w-full mx-8 gap-2 my-8">
+                <div className="flex flex-row justify-center w-full  gap-2">
                   <div className="flex-none">
                     <button
                       onClick={(e) => {
@@ -331,37 +306,30 @@ const RealtimeAttendance = () => {
                       </svg>
                     </button>
                   </div>
-                  <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          console.log(name);
-                        }}
-                        className="h-full self-center bg-red-500 hover:bg-red-700 text-white font-[Montserrat] font-bold py-4 px-4 rounded-full inline-flex items-center"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth={1.5}
-                          stroke="#ffffff"
-                          className="w-6 h-6 mr-2"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
-                          />
-                        </svg>
+                  {/* <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      console.log(name);
+                    }}
+                    className="h-full self-center bg-red-500 hover:bg-red-700 text-white font-[Montserrat] font-bold py-4 px-4 rounded-full inline-flex items-center"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="#ffffff"
+                      className="w-6 h-6 mr-2"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
+                      />
+                    </svg>
 
-                        <span className=" text-[14px] font-semibold">
-                          Nigga
-                        </span>
-                      </button>
-                  {/* <div className="grow flex bg-white rounded-lg">
-                    <div className="self-center px-8  font-[Montserrat] font-semibold">
-                      Tets
-                    </div>
-                  </div> */}
+                    <span className=" text-[14px] font-semibold">Nigga</span>
+                  </button> */}
                   <div className="flex-none">
                     {isCheckIn ? (
                       <button
@@ -387,7 +355,7 @@ const RealtimeAttendance = () => {
                         </svg>
 
                         <span className=" text-[14px] font-semibold">
-                          Check out 
+                          Check out
                         </span>
                       </button>
                     ) : (
@@ -420,6 +388,21 @@ const RealtimeAttendance = () => {
                     )}
                   </div>
                 </div>
+                <div className="flex flex-row justify-center w-full   gap-2">
+                  {[1, 2, 3].map((session) => (
+                    <div className="flex-none" key={session}>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          writeAttendance(name, session, distance);
+                        }}
+                        className="self-center bg-slate-500 hover:bg-slate-700 text-white font-bold py-4 px-6 rounded-full"
+                      >
+                        {session}
+                      </button>
+                    </div>
+                  ))}
+                </div>
                 {hasAttendance ? (
                   <div className="flex flex-row justify-center py-2  gap-8">
                     <div className="justify-center gap-2 flex flex-row bg-white rounded-lg">
@@ -427,7 +410,7 @@ const RealtimeAttendance = () => {
                         {checkName}
                       </div>
                       <div className="s px-8 py-4  font-[Montserrat] text-[14px] md:text-[16px] lg:text-[18px] font-regular">
-                        {isCheckIn ? "Check in" : "Check out"} :{" "}
+                        {checkIsCheckIn ? "Check in" : "Check out"} :{" "}
                         {Moment(checkTime).format("DD/MM/YYYY HH:mm:ss")}
                       </div>
                     </div>

@@ -13,9 +13,8 @@ export default async (req, res) => {
   switch (method) {
     case "POST":
       try {
-        var { name, date, checkInTime, checkOutTime } = req.body;
-        if (name && date) {
-          //   const { error } = await supabase.from("Staff").insert({ name: name });
+        var { name, date, session, checkInTime, checkOutTime } = req.body;
+        if (name && date && session) {
           const { data, error } = await supabase
             .from("Attendances")
             .select("*")
@@ -45,50 +44,90 @@ export default async (req, res) => {
           }
 
           if (checkInTime) {
-            if (data[0].checkInTime) {
-              res.status(200).json({ error: "Already registered! (Check In)" });
-              return;
+            var args = {};
+
+            if (session == 1) {
+              if (data[0].in1) {
+                res.status(200).json({
+                  error: "Already registered! (Check Out - Session 1)",
+                });
+                return;
+              }
+              args.in1 = checkInTime;
+            } else if (session == 2) {
+              if (data[0].in2) {
+                res.status(200).json({
+                  error: "Already registered! (Check Out - Session 2)",
+                });
+                return;
+              }
+              args.in2 = checkInTime;
+            } else if (session == 3) {
+              if (data[0].in3) {
+                res.status(200).json({
+                  error: "Already registered! (Check Out - Session 3)",
+                });
+                return;
+              }
+              args.in3 = checkInTime;
             }
 
             const { error } = await supabase
               .from("Attendances")
-              .update({ checkInTime:checkInTime})
-              .eq("name", name).eq("date",date);
-            if(!error){
+              .update(args)
+              .eq("name", name)
+              .eq("date", date);
+            if (!error) {
               res.status(200).json({ error: error });
               return;
-            }
-            else{
-              res.status(200).json({ success:true});
+            } else {
+              res.status(200).json({ success: true });
               return;
             }
           } else if (checkOutTime) {
-            if (!data[0].checkInTime) {
-              res.status(200).json({ error: "Not yet registered! (Check In)" });
-              return;
-            }
-            
-            if (data[0].checkOutTime) {
-              res.status(200).json({ error: "Already registered! (Check Out)" });
-              return;
+            var args = {};
+
+            if (session == 1) {
+              if (data[0].out1) {
+                res.status(200).json({
+                  error: "Already registered! (Check Out - Session 1)",
+                });
+                return;
+              }
+              args.out1 = checkOutTime;
+            } else if (session == 2) {
+              if (data[0].out2) {
+                res.status(200).json({
+                  error: "Already registered! (Check Out - Session 2)",
+                });
+                return;
+              }
+              args.out2 = checkOutTime;
+            } else if (session == 3) {
+              if (data[0].out3) {
+                res.status(200).json({
+                  error: "Already registered! (Check Out - Session 3)",
+                });
+                return;
+              }
+              args.out3 = checkOutTime;
             }
 
             const { error } = await supabase
               .from("Attendances")
-              .update({ checkOutTime:checkOutTime})
-              .eq("name", name).eq("date",date);
-            if(!error){
+              .update({ checkOutTime: checkOutTime })
+              .eq("name", name)
+              .eq("date", date);
+            if (!error) {
               res.status(200).json({ error: error });
               return;
-            }
-            else{
-              res.status(200).json({ success:true});
+            } else {
+              res.status(200).json({ success: true });
               return;
             }
-
-          } else res.status(200).json({ error:"unknown" });
+          } else res.status(200).json({ error: "unknown" });
         } else {
-          console.log(name, date)
+          console.log(name, date);
           res.status(200).json({ error: "Args not exists" });
         }
       } catch (error) {
