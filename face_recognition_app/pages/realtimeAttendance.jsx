@@ -8,6 +8,9 @@ import React, { useEffect } from "react";
 import useWindowDimensions from "../hooks/useWindowsDimensions";
 // import video from "../statics/1.mp4";
 
+
+let labeledFaceDescriptors;
+
 const RealtimeAttendance = () => {
   //model directory
   const [modelsLoaded, setModelsLoaded] = React.useState(false);
@@ -18,8 +21,8 @@ const RealtimeAttendance = () => {
   const [captureVideo, setCaptureVideo] = React.useState(true);
   //   const [isCheckIn, setIsCheckIn] = React.useState(true);
   const { height, width } = useWindowDimensions();
-  const [labeledFaceDescriptors, setLabeledFaceDescriptors] =
-    React.useState(null);
+  // const [labeledFaceDescriptors, setLabeledFaceDescriptors] =
+  //   React.useState(null);
 
   // const [videoWidth, setVideoWidth] = React.useState(width);
   // const [videoHeight, setVideoHeight] = React.useState(height);
@@ -85,16 +88,13 @@ const RealtimeAttendance = () => {
     const resizedDetections = faceapi.resizeResults(detections, displaySize);
 
     canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
-
     if (labeledFaceDescriptors) {
       const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6);
-      console.log("try2");
       const results = resizedDetections.map((data) =>
         faceMatcher.findBestMatch(data.descriptor)
       );
 
       results.forEach((result, i) => {
-        console.log("try");
         if (result.distance <= threshold) {
           writeAttendance(result.label);
         }
@@ -105,6 +105,7 @@ const RealtimeAttendance = () => {
         });
         drawBox.draw(canvas);
       });
+      // console.log("Name:" , name);
     }
   }
 
@@ -165,7 +166,7 @@ const RealtimeAttendance = () => {
     makeDetections();
 
     (async () => {
-      setLabeledFaceDescriptors(await loadLabeledImages());
+      labeledFaceDescriptors = await loadLabeledImages();
     })();
   };
 
@@ -330,6 +331,32 @@ const RealtimeAttendance = () => {
                       </svg>
                     </button>
                   </div>
+                  <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          console.log(name);
+                        }}
+                        className="h-full self-center bg-red-500 hover:bg-red-700 text-white font-[Montserrat] font-bold py-4 px-4 rounded-full inline-flex items-center"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="#ffffff"
+                          className="w-6 h-6 mr-2"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
+                          />
+                        </svg>
+
+                        <span className=" text-[14px] font-semibold">
+                          Nigga
+                        </span>
+                      </button>
                   {/* <div className="grow flex bg-white rounded-lg">
                     <div className="self-center px-8  font-[Montserrat] font-semibold">
                       Tets
@@ -360,7 +387,7 @@ const RealtimeAttendance = () => {
                         </svg>
 
                         <span className=" text-[14px] font-semibold">
-                          Check out
+                          Check out 
                         </span>
                       </button>
                     ) : (
