@@ -56,9 +56,6 @@ const Home = () => {
       setModalOn(true);
     }
   }
-  function goRA() {
-    window.location.href = "/realtimeAttendance";
-  }
   function goCheckIn() {
     window.location.href = "/checkIn";
   }
@@ -80,6 +77,7 @@ const Home = () => {
   return (
     <section className="flex gap-0 bg-black">
       <div className="items-stretch flex flex-col w-full ">
+        
         <div className=" px-16 py-16 font-[Montserrat]  flex flex-col h-screen ">
           <div className=" grow bg-white rounded-lg px-16 py-12 ">
             <div className="flex flex-col h-full items-center justify-center">
@@ -93,22 +91,49 @@ const Home = () => {
                 onClick={(e) => {
                   e.preventDefault();
                   // selectDate(Moment(e).format("DD/MM/YYYY"));
-                  goRA();
+                  goCheckIn();
                 }}
               >
                 <div className="flex-none ">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
-                    fill="currentColor"
+                    fill="#ffffff"
                     className="w-6 h-6"
                   >
-                    <path d="M6 3a3 3 0 00-3 3v1.5a.75.75 0 001.5 0V6A1.5 1.5 0 016 4.5h1.5a.75.75 0 000-1.5H6zM16.5 3a.75.75 0 000 1.5H18A1.5 1.5 0 0119.5 6v1.5a.75.75 0 001.5 0V6a3 3 0 00-3-3h-1.5zM12 8.25a3.75 3.75 0 100 7.5 3.75 3.75 0 000-7.5zM4.5 16.5a.75.75 0 00-1.5 0V18a3 3 0 003 3h1.5a.75.75 0 000-1.5H6A1.5 1.5 0 014.5 18v-1.5zM21 16.5a.75.75 0 00-1.5 0V18a1.5 1.5 0 01-1.5 1.5h-1.5a.75.75 0 000 1.5H18a3 3 0 003-3v-1.5z" />
+                    <path
+                      fillRule="evenodd"
+                      d="M7.5 3.75A1.5 1.5 0 006 5.25v13.5a1.5 1.5 0 001.5 1.5h6a1.5 1.5 0 001.5-1.5V15a.75.75 0 011.5 0v3.75a3 3 0 01-3 3h-6a3 3 0 01-3-3V5.25a3 3 0 013-3h6a3 3 0 013 3V9A.75.75 0 0115 9V5.25a1.5 1.5 0 00-1.5-1.5h-6zm5.03 4.72a.75.75 0 010 1.06l-1.72 1.72h10.94a.75.75 0 010 1.5H10.81l1.72 1.72a.75.75 0 11-1.06 1.06l-3-3a.75.75 0 010-1.06l3-3a.75.75 0 011.06 0z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                 </div>
-                <div className="text-left">Check in/out</div>
+                <div className="text-left">Check in</div>
               </button>
-              
+              <button
+                className="w-96 flex-none flex flex-row w-full justify-center my-2 px-6 py-4 border border-slate-300 rounded-lg items-center bg-red-500 text-white font-semibold gap-4 hover:bg-red-700 "
+                onClick={(e) => {
+                  e.preventDefault();
+                  // selectDate(Moment(e).format("DD/MM/YYYY"));
+                  goCheckOut();
+                }}
+              >
+                <div className="flex-none ">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="#ffffff"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M7.5 3.75A1.5 1.5 0 006 5.25v13.5a1.5 1.5 0 001.5 1.5h6a1.5 1.5 0 001.5-1.5V15a.75.75 0 011.5 0v3.75a3 3 0 01-3 3h-6a3 3 0 01-3-3V5.25a3 3 0 013-3h6a3 3 0 013 3V9A.75.75 0 0115 9V5.25a1.5 1.5 0 00-1.5-1.5h-6zm10.72 4.72a.75.75 0 011.06 0l3 3a.75.75 0 010 1.06l-3 3a.75.75 0 11-1.06-1.06l1.72-1.72H9a.75.75 0 010-1.5h10.94l-1.72-1.72a.75.75 0 010-1.06z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div className="text-left">Check out</div>
+              </button>
               <button
                 className="w-96 flex-none flex flex-row w-full justify-center my-2 px-6 py-4 border border-slate-300 rounded-lg items-center bg-slate-500 text-white font-semibold gap-4 hover:bg-slate-700 "
                 onClick={(e) => {
