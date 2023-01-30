@@ -7,7 +7,18 @@ import { CSVLink } from "react-csv";
 // import video from "../statics/1.mp4";
 
 const AttendancesPage = () => {
-  const [listAttendance, setListAttendance] = React.useState([]);
+  const [listAttendance, setListAttendance] = React.useState([
+    {
+      name: "Test",
+      date: "29/01/2023",
+      in1: "21:31:44",
+      out1: "",
+      in2: "21:31:44",
+      out2: "",
+      in3: "21:31:44",
+      out3: "",
+    },
+  ]);
   const [listDate, setListDate] = React.useState([]);
   const [modalChoices, setModalChoices] = React.useState(false);
   const [nameSelected, setNameSelected] = React.useState("");
@@ -38,6 +49,21 @@ const AttendancesPage = () => {
           })
       );
     });
+    function isValidDate(d) {
+      return d instanceof Date && !isNaN(d);
+    }
+    setListDate(
+      listAttendance
+        .map((e) => e.date)
+        .map((e) =>
+          isValidDate(Moment(e, "DD/MM/YYYY").toDate())
+            ? Moment(e, "DD/MM/YYYY").toDate()
+            : null
+        )
+        .sort(function (a, b) {
+          return b - a;
+        })
+    );
   }, []);
   React.useEffect(() => {
     Moment.locale("en");
@@ -146,8 +172,12 @@ const AttendancesPage = () => {
                 .filter((x) => !!x)}
               headers={[
                 { label: "NAME", key: "name" },
-                { label: "CHECK_IN_TIME", key: "checkInTime" },
-                { label: "CHECK_OUT_TIME", key: "checkOutTime" },
+                { label: "IN1", key: "in1" },
+                { label: "OUT1", key: "out1" },
+                { label: "IN2", key: "in2" },
+                { label: "OUT2", key: "out2" },
+                { label: "IN3", key: "in3" },
+                { label: "OUT3", key: "out3" },
               ]}
               filename={selectedDate + "_attendance.csv"}
             >
@@ -231,20 +261,36 @@ const AttendancesPage = () => {
                 )}
               {selectedDate ? (
                 <div className="flex flex-col w-full my-2 px-6 py-4 border border-slate-300 rounded-lg gap-2">
-                  <div className="flex-none flex flex-row items-center text-sm font-semibold">
-                    <div className="flex basis-1/2">Name</div>
-                    <div className="flex basis-1/4">Check in</div>
-                    <div className="flex basis-1/4">Check out</div>
+                  <div className="flex-none flex flex-row items-center text-sm font-semibold w-full">
+                    <div className="flex basis-6/12">Name</div>
+                    <div className="flex basis-1/12">In 1</div>
+                    <div className="flex basis-1/12">Out 1</div>
+                    <div className="flex basis-1/12">In 2</div>
+                    <div className="flex basis-1/12">Out 2</div>
+                    <div className="flex basis-1/12">In 3</div>
+                    <div className="flex basis-1/12">Out 3</div>
                   </div>
                   {listAttendance.map((e) =>
                     e.date == selectedDate ? (
-                      <div className="flex-none flex flex-row text-base ">
-                        <div className="flex basis-1/2">{e.name}</div>
-                        <div className="flex basis-1/4">
-                          {e.checkInTime ? e.checkInTime : "-"}
+                      <div className="flex-none flex flex-row text-base w-full">
+                        <div className="flex basis-6/12">{e.name}</div>
+                        <div className="flex basis-1/12">
+                          {e.in1 ? e.in1 : "-"}
                         </div>
-                        <div className="flex basis-1/4">
-                          {e.checkOutTime ? e.checkOutTime : "-"}
+                        <div className="flex basis-1/12">
+                          {e.out1 ? e.out1 : "-"}
+                        </div>
+                        <div className="flex basis-1/12">
+                          {e.in2 ? e.in2 : "-"}
+                        </div>
+                        <div className="flex basis-1/12">
+                          {e.out2 ? e.out2 : "-"}
+                        </div>
+                        <div className="flex basis-1/12">
+                          {e.in3 ? e.in3 : "-"}
+                        </div>
+                        <div className="flex basis-1/12">
+                          {e.out3 ? e.out3 : "-"}
                         </div>
                       </div>
                     ) : (

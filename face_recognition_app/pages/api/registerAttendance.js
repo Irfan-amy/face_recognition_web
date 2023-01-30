@@ -14,6 +14,7 @@ export default async (req, res) => {
     case "POST":
       try {
         var { name, date, session, checkInTime, checkOutTime } = req.body;
+        console.log(name, date, session, checkInTime, checkOutTime);
         if (name && date && session) {
           const { data, error } = await supabase
             .from("Attendances")
@@ -38,12 +39,24 @@ export default async (req, res) => {
             }
           }
 
-          if (data[0].checkInTime && data[0].checkOutTime) {
-            res.status(200).json({ error: "Already registered!" });
-            return;
-          }
+          // if (data[0].checkInTime && data[0].checkOutTime) {
+          //   res.status(200).json({ error: "Already registered!" });
+          //   return;
+          // }
 
           if (checkInTime) {
+            const response = await supabase
+              .from("Attendances")
+              .select("*")
+              .eq("name", name)
+              .eq("date", date);
+            console.log(response.data);
+
+            if (response.error) {
+              res.status(200).json({ error: error });
+              return;
+            }
+            const data = response.data;
             var args = {};
 
             if (session == 1) {

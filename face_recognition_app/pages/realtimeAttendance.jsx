@@ -97,7 +97,7 @@ const RealtimeAttendance = () => {
 
       results.forEach((result, i) => {
         const box = resizedDetections[i].detection.box;
-        setName(result.toString());
+        setName(result.label);
         setDistance(result.distance);
         const drawBox = new faceapi.draw.DrawBox(box, {
           label: result.toString(),
@@ -201,6 +201,8 @@ const RealtimeAttendance = () => {
     if (isCheckIn) args.checkInTime = Moment(currentTime).format("HH:mm:ss");
     else args.checkOutTime = Moment(currentTime).format("HH:mm:ss");
 
+
+    console.log(args);
     var result = await fetch("/api/registerAttendance", {
       method: "POST",
       headers: {
