@@ -24,7 +24,7 @@ export default async (req, res) => {
           return;
         }
         if (!error) {
-          if (!data.find((el) => el.name == name + ".jpg")) {
+          if (data.find((el) => el.name == name + ".jpg")) {
             const { data, error } = await supabase.storage
               .from("images")
               .remove([name + ".jpg"]);

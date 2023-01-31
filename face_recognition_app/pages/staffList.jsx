@@ -14,9 +14,11 @@ const StaffList = () => {
 
   React.useEffect(() => {
     getStaffList().then((staffList) => {
-      setListStaff(staffList.filter(function(staffName) {
-        return !!staffName;
-      }));
+      setListStaff(
+        staffList.filter(function (staffName) {
+          return !!staffName;
+        })
+      );
     });
   }, []);
 
@@ -34,9 +36,9 @@ const StaffList = () => {
   }
 
   async function handleChoice(choice) {
-    setModalType("Loading");
-    setModalOn(true);
     if (choice == true) {
+      setModalType("Loading");
+      setModalOn(true);
       var result = await fetch("/api/deleteStaff", {
         method: "POST",
         headers: {
@@ -47,16 +49,19 @@ const StaffList = () => {
         }),
       });
       if (result.status == 200) {
-        goHome();
+       refresh();
+      } else {
+        const { error } = await result.json();
+        console.log(error);
+        setModalOn(false);
+        setModalError(error);
+        setModalType("Error");
+        setModalOn(true);
       }
-    } else {
-      const { error } = await result.json();
-      console.log(error);
-      setModalOn(false);
-      setModalError(error);
-      setModalType("Error");
-      setModalOn(true);
     }
+  }
+  function refresh() {
+    window.location.href = "/staffList";
   }
   function goHome() {
     window.location.href = "/";

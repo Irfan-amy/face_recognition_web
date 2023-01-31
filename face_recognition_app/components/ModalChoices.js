@@ -5,7 +5,7 @@ const Modal = ({ setModalOn, handleChoice, name = "name" }) => {
     setModalOn(false);
   };
   const handleNoClick = () => {
-    handleChoice(true);
+    handleChoice(false);
     setModalOn(false);
   };
 
