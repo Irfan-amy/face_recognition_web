@@ -126,10 +126,9 @@ export default async (req, res) => {
               }
               args.out3 = checkOutTime;
             }
-
             const { error } = await supabase
               .from("Attendances")
-              .update({ args })
+              .update( args )
               .eq("name", name)
               .eq("date", date);
             if (!error) {
