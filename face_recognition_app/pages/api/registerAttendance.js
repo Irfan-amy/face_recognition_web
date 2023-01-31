@@ -43,9 +43,7 @@ export default async (req, res) => {
           //   res.status(200).json({ error: "Already registered!" });
           //   return;
           // }
-
-          if (checkInTime) {
-            const response = await supabase
+          const response = await supabase
               .from("Attendances")
               .select("*")
               .eq("name", name)
@@ -56,6 +54,8 @@ export default async (req, res) => {
               res.status(200).json({ error: error });
               return;
             }
+            
+          if (checkInTime) {
             const data = response.data;
             var args = {};
 
@@ -98,6 +98,7 @@ export default async (req, res) => {
               return;
             }
           } else if (checkOutTime) {
+            const data = response.data;
             var args = {};
 
             if (session == 1) {
