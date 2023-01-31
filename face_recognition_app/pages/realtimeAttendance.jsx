@@ -184,7 +184,7 @@ const RealtimeAttendance = () => {
       return;
     }
 
-    if (distance <= threshold) {
+    if (!(distance <= threshold)) {
       setCheckName("Try Again");
       setHasAttendance(true);
       setCheckTime(new Date());
